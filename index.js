@@ -90,11 +90,11 @@ const start = () => {
           chatId,
           `Случайная нерешенная тема: *${randomTopic}*
           
-          *JS*: Ссылка на сайт с информацией - ${searchUrlJS}
+          *JS*: Ссылка на страницу с информацией - ${searchUrlJS}
           
-          *React*: Ссылка на сайт с информацией - ${searchUrlReact}
+          *React*: Ссылка на страницу с информацией - ${searchUrlReact}
           
-          *TS*: Ссылка на сайт с информацией - ${searchUrlTS}
+          *TS*: Ссылка на страницу с информацией - ${searchUrlTS}
           
           Если тема связана с чем-то другим, то перейди по этой ссылке и допиши сам поисковой запрос - ${searchUrlDefault}`,
           { parse_mode: 'Markdown' }
@@ -113,10 +113,12 @@ const start = () => {
         const topics = res.rows
           .map(
             (row, index) =>
-              `${index + 1}. ${row.topic} (добавлено: ${row.created_at})`
+              `${index + 1}. *${row.topic}* (добавлено: ${row.created_at})`
           )
           .join('\n')
-        return bot.sendMessage(chatId, `Нерешенные темы:\n${topics}`)
+        return bot.sendMessage(chatId, `Нерешенные темы:\n${topics}`, {
+          parse_mode: 'Markdown',
+        })
       }
 
       if (text === '/seeresolved') {
@@ -126,10 +128,12 @@ const start = () => {
         const topics = res.rows
           .map(
             (row, index) =>
-              `${index + 1}. ${row.topic} (добавлено: ${row.created_at})`
+              `${index + 1}. *${row.topic}* (добавлено: ${row.created_at})`
           )
           .join('\n')
-        return bot.sendMessage(chatId, `Решенные темы:\n${topics}`)
+        return bot.sendMessage(chatId, `Решенные темы:\n${topics}`, {
+          parse_mode: 'Markdown',
+        })
       }
 
       if (text === '/seeall') {
@@ -184,7 +188,6 @@ const start = () => {
             'UPDATE all_topics SET is_resolved = $1 WHERE topic = $2',
             [true, topic]
           )
-          // await client.query('SELECT renumber_unresolved_topics()')
 
           return bot.sendMessage(chatId, 'Тема успешно отмечена как решенная!')
         } else {
@@ -199,7 +202,7 @@ const start = () => {
     } catch (error) {
       return await bot.sendMessage(
         chatId,
-        'Произошла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз позже.'
+        'Произошла ошибка при обработке вашего запроса. Пожалуйста, введите верные данные, или, если и это не помогает, попробуйте еще раз позже.'
       )
     }
   })
